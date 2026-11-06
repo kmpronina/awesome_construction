@@ -1,0 +1,32 @@
+@use 'functions' as fn;
+
+.content {
+	width: var(--radix-dropdown-menu-trigger-width);
+	min-width: 110px;
+
+	.scroll {
+		max-height: 250px;
+	}
+
+	.title {
+		@include fn.flex(row, center, null, 8px);
+
+		overflow: hidden;
+
+		svg {
+			color: fn.get-color('grey75');
+		}
+
+		div {
+			flex: 1;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+
+			span {
+				margin: 0 0 0 4px;
+				color: fn.get-color('text-black');
+			}
+		}
+	}
+}

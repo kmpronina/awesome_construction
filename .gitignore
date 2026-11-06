@@ -30,8 +30,13 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files: any local env, except the example
 .env*
+!.env.example
+
+# supabase cli
+supabase/.temp
+supabase/.branches
 
 # vercel
 .vercel
