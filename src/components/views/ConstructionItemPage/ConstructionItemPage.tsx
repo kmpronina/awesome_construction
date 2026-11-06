@@ -6,16 +6,21 @@ import { ConstructionItem, TaskListItem } from '@/types';
 /* Utils */
 import { dateFormatter } from '@/utils/helpers';
 
+/* UI */
+import { Button } from '@/components/ui/Button';
+
 /* Cards */
 import { TaskCard } from '@/components/cards/TaskCard';
 
 interface ConstructionItemPageProps {
 	item: ConstructionItem;
 	tasks: TaskListItem[];
+	// Shows the link to the edit page
+	canEdit: boolean;
 }
 
 const ConstructionItemPage = (props: ConstructionItemPageProps) => {
-	const { item, tasks } = props;
+	const { item, tasks, canEdit } = props;
 
 	return (
 		<div className="flex flex-col gap-8">
@@ -24,7 +29,15 @@ const ConstructionItemPage = (props: ConstructionItemPageProps) => {
 					← All constructions
 				</Link>
 
-				<h1 className="text-2xl font-bold text-green sm:text-3xl">{item.title}</h1>
+				<div className="flex flex-wrap items-start justify-between gap-3">
+					<h1 className="min-w-0 text-2xl font-bold break-words text-green sm:text-3xl">{item.title}</h1>
+
+					{canEdit && (
+						<Button asChild className="shrink-0">
+							<Link href={`/constructions/${item.id}/edit`}>Edit</Link>
+						</Button>
+					)}
+				</div>
 
 				<p className="text-zinc-600">{item.address}</p>
 
