@@ -54,9 +54,7 @@ const SelectField = (props: SelectFieldProps) => {
 				{...restProps}
 			/>
 
-			{hasErrors && <DescriptionField isInvalid>{meta.error}</DescriptionField>}
-
-			{!hasErrors && !!description && <DescriptionField>{description}</DescriptionField>}
+			{(hasErrors || description) && <DescriptionField isInvalid={hasErrors}>{hasErrors ? meta.error : description}</DescriptionField>}
 		</div>
 	);
 };

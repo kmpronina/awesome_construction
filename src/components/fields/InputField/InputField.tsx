@@ -51,7 +51,6 @@ const InputField = (props: InputFieldProps) => {
 			/>
 
 			{(hasErrors || description) && <DescriptionField isInvalid={hasErrors}>{hasErrors ? meta.error : description}</DescriptionField>}
-			{!hasErrors && !!description && <DescriptionField isInvalid={hasErrors}>{description}</DescriptionField>}
 		</div>
 	);
 };
