@@ -3,12 +3,10 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { connection } from 'next/server';
 
-/* Libs */
-import { createClient } from '@/libs/supabase/server';
-
 /* Actions */
 import { getConstruction } from '@/actions/constructions';
 import { getTasks } from '@/actions/tasks';
+import { getUserId } from '@/actions/users';
 
 /* Views */
 import { ConstructionItemPage } from '@/components/views/ConstructionItemPage';
@@ -21,17 +19,6 @@ export async function generateMetadata(): Promise<Metadata> {
 		title: 'Construction'
 	};
 }
-
-// getClaims verifies the JWT, so the user id can be trusted on the server
-const getUserId = async () => {
-	const supabase = await createClient();
-
-	const { data, error } = await supabase.auth.getClaims();
-
-	if (error) throw error;
-
-	return data?.claims.sub ?? null;
-};
 
 const ConstructionItem = async ({ params }: { params: Promise<{ id: string }> }) => {
 	await connection();

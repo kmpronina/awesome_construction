@@ -9,6 +9,9 @@ import type { ConstructionFields } from '@/types';
 /* Libs */
 import { createClient } from '@/libs/supabase/server';
 
+/* Actions */
+import { getUserId } from '@/actions/users';
+
 /* Constants */
 import { INVALID_UUID_CODE } from '@/utils/constants';
 
@@ -16,11 +19,14 @@ interface ActionError {
 	error: string;
 }
 
-// A creator sees all constructions through RLS, so any of them can get a task
-export const getConstructions = async () => {
+// RLS decides which constructions the user sees: a creator sees all, an executor only those with own tasks.
+// 'title' suits selects in forms, 'newest' suits the list page
+export const getConstructions = async (order: 'title' | 'newest' = 'title') => {
 	const supabase = await createClient();
 
-	const { data, error } = await supabase.from('constructions').select('id, title, address, author_id, created_at').order('title');
+	const query = supabase.from('constructions').select('id, title, address, author_id, created_at');
+
+	const { data, error } = order === 'newest' ? await query.order('created_at', { ascending: false }) : await query.order('title');
 
 	if (error) throw error;
 
@@ -48,10 +54,7 @@ export const createConstruction = async (fields: ConstructionFields): Promise<Ac
 
 	if (!title || !address) return { error: 'Title and address are required' };
 
-	const supabase = await createClient();
-
-	const { data: claimsData } = await supabase.auth.getClaims();
-	const userId = claimsData?.claims.sub;
+	const [supabase, userId] = await Promise.all([createClient(), getUserId()]);
 
 	if (!userId) return { error: 'You are not signed in' };
 

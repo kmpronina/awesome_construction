@@ -12,6 +12,9 @@ export type UserItem = Pick<Tables<'profiles'>, 'id' | 'email' | 'name' | 'role'
 
 export type TaskItem = Pick<Tables<'tasks'>, 'id' | 'title' | 'description' | 'status' | 'construction_id' | 'author_id' | 'executor_id' | 'created_at'>;
 
+// Fields that decide who can act on a task
+export type TaskAccess = Pick<TaskItem, 'status' | 'author_id' | 'executor_id'>;
+
 // Task for lists and cards: the status label comes from the statuses table
 export type TaskListItem = TaskItem & {
 	statusInfo: Pick<Tables<'statuses'>, 'label'> | null;

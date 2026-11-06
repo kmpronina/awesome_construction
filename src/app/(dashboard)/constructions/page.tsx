@@ -2,8 +2,8 @@ import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { connection } from 'next/server';
 
-/* Libs */
-import { createClient } from '@/libs/supabase/server';
+/* Actions */
+import { getConstructions } from '@/actions/constructions';
 
 /* Views */
 import { ConstructionsListPage } from '@/components/views/ConstructionsListPage';
@@ -17,22 +17,10 @@ export async function generateMetadata(): Promise<Metadata> {
 	};
 }
 
-// Server client reads the session from cookies, so RLS applies exactly as for the signed-in user
-const getConstructions = async () => {
-	const supabase = await createClient();
-
-	const { data, error } = await supabase.from('constructions').select('id, title, address, author_id, created_at').order('created_at', { ascending: false });
-
-	// Let the nearest error.tsx handle it instead of showing an empty list
-	if (error) throw error;
-
-	return data;
-};
-
 const ConstructionsList = async () => {
 	await connection();
 
-	const constructions = await getConstructions();
+	const constructions = await getConstructions('newest');
 
 	return <ConstructionsListPage items={constructions} />;
 };
