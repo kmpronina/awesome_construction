@@ -39,3 +39,28 @@ export const createConstruction = async (fields: ConstructionFields): Promise<Ac
 	// redirect throws a framework exception, so it must stay outside try/catch
 	redirect(`/constructions/${data.id}`);
 };
+
+// The update goes through RLS: only the construction author (a creator) can edit it,
+// and only title and address are granted for update
+export const updateConstruction = async (constructionId: string, fields: ConstructionFields): Promise<ActionError> => {
+	// Never trust client-side validation in a Server Function
+	const title = fields.title.trim();
+	const address = fields.address.trim();
+
+	if (!title || !address) return { error: 'Title and address are required' };
+
+	const supabase = await createClient();
+
+	// select() returns the updated rows: if RLS filtered the construction out, nothing is updated and no error is returned
+	const { data, error } = await supabase.from('constructions').update({ title, address }).eq('id', constructionId).select('id');
+
+	if (error) return { error: 'Failed to update construction' };
+
+	if (data.length === 0) return { error: 'Construction not found or you cannot edit it' };
+
+	revalidatePath('/constructions');
+	revalidatePath(`/constructions/${constructionId}`);
+
+	// redirect throws a framework exception, so it must stay outside try/catch
+	redirect(`/constructions/${constructionId}`);
+};
