@@ -13,6 +13,17 @@ interface ActionError {
 	error: string;
 }
 
+// A creator sees all constructions through RLS, so any of them can get a task
+export const getConstructions = async () => {
+	const supabase = await createClient();
+
+	const { data, error } = await supabase.from('constructions').select('id, title, address, author_id, created_at').order('title');
+
+	if (error) throw error;
+
+	return data;
+};
+
 // Runs on the server with the user's session, so the insert goes through RLS:
 // only a creator can add a construction, and author_id must be the current user
 export const createConstruction = async (fields: ConstructionFields): Promise<ActionError> => {
