@@ -47,9 +47,8 @@ const getTask = async (id: string) => {
 	return data;
 };
 
-// Status changes the current user can make right now. This only decides which buttons to show:
-// change_task_status re-checks the same rules in the database
-const getTransitions = async (task: { status: string; author_id: string; executor_id: string }) => {
+// The current user's id and role, loaded once for the transitions and the edit link
+const getViewer = async () => {
 	const supabase = await createClient();
 
 	const [{ data: claimsData, error: claimsError }, { data: role, error: roleError }] = await Promise.all([
@@ -60,12 +59,24 @@ const getTransitions = async (task: { status: string; author_id: string; executo
 	if (claimsError) throw claimsError;
 	if (roleError) throw roleError;
 
-	const userId = claimsData?.claims.sub;
+	return { userId: claimsData?.claims.sub ?? null, role };
+};
+
+type Viewer = Awaited<ReturnType<typeof getViewer>>;
+
+type TaskAccess = { status: string; author_id: string; executor_id: string };
+
+// Status changes the current user can make right now. This only decides which buttons to show:
+// change_task_status re-checks the same rules in the database
+const getTransitions = async (task: TaskAccess, viewer: Viewer) => {
+	const { userId, role } = viewer;
 
 	// A creator acts only on own tasks, an executor only on tasks assigned to them
 	const isParticipant = (role === 'creator' && task.author_id === userId) || (role === 'executor' && task.executor_id === userId);
 
 	if (!userId || !role || !isParticipant) return [];
+
+	const supabase = await createClient();
 
 	const { data, error } = await supabase
 		.from('status_transitions')
@@ -76,6 +87,11 @@ const getTransitions = async (task: { status: string; author_id: string; executo
 	if (error) throw error;
 
 	return data;
+};
+
+// Only the author can edit, and an accepted task cannot be edited (the edit page and a trigger check it too)
+const getCanEdit = (task: TaskAccess, viewer: Viewer) => {
+	return viewer.role === 'creator' && task.author_id === viewer.userId && task.status !== 'accepted';
 };
 
 // Status changes of the task, oldest first. RLS on task_history shows it only if the task itself is visible.
@@ -109,9 +125,11 @@ const TaskItem = async ({ params }: { params: Promise<{ id: string }> }) => {
 	// Missing, deleted or hidden by RLS: show the 404 page
 	if (!task) notFound();
 
-	const [transitions, history] = await Promise.all([getTransitions(task), getHistory(task.id)]);
+	const viewer = await getViewer();
 
-	return <TaskItemPage item={task} transitions={transitions} history={history} />;
+	const [transitions, history] = await Promise.all([getTransitions(task, viewer), getHistory(task.id)]);
+
+	return <TaskItemPage item={task} transitions={transitions} history={history} canEdit={getCanEdit(task, viewer)} />;
 };
 
 const Task = ({ params }: PageProps<'/tasks/[id]'>) => {
