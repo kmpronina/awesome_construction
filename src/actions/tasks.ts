@@ -220,3 +220,19 @@ export const getHistory = async (taskId: string) => {
 
 	return data;
 };
+
+// Soft delete through the delete_task database function: only the task author (a creator) can delete,
+// the task stays in the database with deleted_at set and disappears for everyone through RLS
+export const deleteTask = async (taskId: string, constructionId: string): Promise<ActionError> => {
+	const supabase = await createClient();
+
+	const { error } = await supabase.rpc('delete_task', { p_task_id: taskId });
+
+	if (error) return { error: error.code === RAISE_EXCEPTION_CODE ? error.message : 'Failed to delete task' };
+
+	revalidatePath(`/constructions/${constructionId}`);
+	revalidatePath('/tasks/my');
+
+	// redirect throws a framework exception, so it must stay outside try/catch
+	redirect(`/constructions/${constructionId}`);
+};

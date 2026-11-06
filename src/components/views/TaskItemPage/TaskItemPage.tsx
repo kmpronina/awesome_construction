@@ -13,13 +13,14 @@ import { Button } from '@/components/ui/Button';
 import { TaskStatusForm } from '@/components/forms/TaskStatusForm';
 
 /* Local */
+import DeleteTaskButton from './DeleteTaskButton/DeleteTaskButton';
 import TaskHistory from './TaskHistory/TaskHistory';
 
 interface TaskItemPageProps {
 	item: TaskDetailsItem;
 	transitions: TransitionItem[];
 	history: TaskHistoryItem[];
-	// Shows the link to the edit page
+	// Shows the edit link and the delete button
 	canEdit: boolean;
 }
 
@@ -36,15 +37,19 @@ const TaskItemPage = (props: TaskItemPageProps) => {
 				)}
 
 				<div className="flex flex-wrap items-start justify-between gap-3">
-					<h1 className="min-w-0 text-2xl font-bold break-words text-green sm:text-3xl">{item.title}</h1>
+					<h1 className="min-w-0 text-2xl font-bold wrap-break-word text-green sm:text-3xl">{item.title}</h1>
 
 					<div className="flex shrink-0 items-center gap-3">
 						<span className="rounded-full bg-zinc-100 px-3 py-1 text-lg font-bold text-zinc-600">{item.statusInfo?.label ?? item.status}</span>
 
 						{canEdit && (
-							<Button asChild>
-								<Link href={`/tasks/${item.id}/edit`}>Edit</Link>
-							</Button>
+							<>
+								<Button asChild>
+									<Link href={`/tasks/${item.id}/edit`}>Edit</Link>
+								</Button>
+
+								<DeleteTaskButton taskId={item.id} constructionId={item.construction_id} />
+							</>
 						)}
 					</div>
 				</div>
