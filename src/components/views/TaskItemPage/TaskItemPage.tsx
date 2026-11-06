@@ -3,17 +3,20 @@ import Link from 'next/link';
 /* Types */
 import type { TaskDetailsItem, TaskHistoryItem, TransitionItem } from '@/types';
 
+/* Actions */
+import { deleteTask } from '@/actions/tasks';
+
 /* Utils */
 import { dateFormatter, getUserLabel } from '@/utils/helpers';
 
 /* UI */
 import { Button } from '@/components/ui/Button';
+import { DeleteButton } from '@/components/ui/DeleteButton';
 
 /* Forms */
 import { TaskStatusForm } from '@/components/forms/TaskStatusForm';
 
 /* Local */
-import DeleteTaskButton from './DeleteTaskButton/DeleteTaskButton';
 import TaskHistory from './TaskHistory/TaskHistory';
 
 interface TaskItemPageProps {
@@ -48,7 +51,7 @@ const TaskItemPage = (props: TaskItemPageProps) => {
 									<Link href={`/tasks/${item.id}/edit`}>Edit</Link>
 								</Button>
 
-								<DeleteTaskButton taskId={item.id} constructionId={item.construction_id} />
+								<DeleteButton onDelete={deleteTask.bind(null, item.id, item.construction_id)} />
 							</>
 						)}
 					</div>

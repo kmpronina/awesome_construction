@@ -19,6 +19,9 @@ interface ActionError {
 	error: string;
 }
 
+// Errors raised by our database triggers (raise exception) are meant for users
+const RAISE_EXCEPTION_CODE = 'P0001';
+
 // RLS decides which constructions the user sees: a creator sees all, an executor only those with own tasks.
 // 'title' suits selects in forms, 'newest' suits the list page
 export const getConstructions = async (order: 'title' | 'newest' = 'title') => {
@@ -92,4 +95,22 @@ export const updateConstruction = async (constructionId: string, fields: Constru
 
 	// redirect throws a framework exception, so it must stay outside try/catch
 	redirect(`/constructions/${constructionId}`);
+};
+
+// The delete goes through RLS: only the construction author (a creator) can delete it.
+// A database trigger rejects deleting a construction that has tasks, soft-deleted ones included
+export const deleteConstruction = async (constructionId: string): Promise<ActionError> => {
+	const supabase = await createClient();
+
+	// select() returns the deleted rows: if RLS filtered the construction out, nothing is deleted and no error is returned
+	const { data, error } = await supabase.from('constructions').delete().eq('id', constructionId).select('id');
+
+	if (error) return { error: error.code === RAISE_EXCEPTION_CODE ? error.message : 'Failed to delete construction' };
+
+	if (data.length === 0) return { error: 'Construction not found or you cannot delete it' };
+
+	revalidatePath('/constructions');
+
+	// redirect throws a framework exception, so it must stay outside try/catch
+	redirect('/constructions');
 };

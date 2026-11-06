@@ -3,11 +3,15 @@ import Link from 'next/link';
 /* Types */
 import { ConstructionItem, TaskListItem } from '@/types';
 
+/* Actions */
+import { deleteConstruction } from '@/actions/constructions';
+
 /* Utils */
 import { dateFormatter } from '@/utils/helpers';
 
 /* UI */
 import { Button } from '@/components/ui/Button';
+import { DeleteButton } from '@/components/ui/DeleteButton';
 
 /* Cards */
 import { TaskCard } from '@/components/cards/TaskCard';
@@ -15,7 +19,7 @@ import { TaskCard } from '@/components/cards/TaskCard';
 interface ConstructionItemPageProps {
 	item: ConstructionItem;
 	tasks: TaskListItem[];
-	// Shows the link to the edit page
+	// Shows the edit link and the delete button
 	canEdit: boolean;
 }
 
@@ -33,9 +37,13 @@ const ConstructionItemPage = (props: ConstructionItemPageProps) => {
 					<h1 className="min-w-0 text-2xl font-bold break-words text-green sm:text-3xl">{item.title}</h1>
 
 					{canEdit && (
-						<Button asChild className="shrink-0">
-							<Link href={`/constructions/${item.id}/edit`}>Edit</Link>
-						</Button>
+						<div className="flex shrink-0 items-center gap-3">
+							<Button asChild>
+								<Link href={`/constructions/${item.id}/edit`}>Edit</Link>
+							</Button>
+
+							<DeleteButton onDelete={deleteConstruction.bind(null, item.id)} />
+						</div>
 					)}
 				</div>
 
