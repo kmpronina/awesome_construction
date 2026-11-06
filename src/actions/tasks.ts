@@ -9,6 +9,9 @@ import type { TaskCreateFields, TaskUpdateFields } from '@/types';
 /* Libs */
 import { createClient } from '@/libs/supabase/server';
 
+/* Constants */
+import { INVALID_UUID_CODE } from '@/utils/constants';
+
 interface ActionError {
 	error: string;
 }
@@ -84,4 +87,34 @@ export const updateTask = async (taskId: string, fields: TaskUpdateFields): Prom
 
 	// redirect throws a framework exception, so it must stay outside try/catch
 	redirect(`/tasks/${taskId}`);
+};
+
+// Returns the task only if the current user is its author; null otherwise.
+// RLS lets any creator read the task, but only the author can update it
+export const getOwnTask = async (id: string) => {
+	const supabase = await createClient();
+
+	// getClaims verifies the JWT, so the user id can be trusted on the server
+	const { data: claimsData, error: claimsError } = await supabase.auth.getClaims();
+
+	if (claimsError) throw claimsError;
+
+	const userId = claimsData?.claims.sub;
+
+	if (!userId) return null;
+
+	const { data, error } = await supabase
+		.from('tasks')
+		.select('id, title, description, status, construction_id, author_id, executor_id, created_at')
+		.eq('id', id)
+		.is('deleted_at', null)
+		.maybeSingle();
+
+	if (error?.code === INVALID_UUID_CODE) return null;
+
+	if (error) throw error;
+
+	if (!data || data.author_id !== userId) return null;
+
+	return data;
 };
