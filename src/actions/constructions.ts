@@ -9,6 +9,9 @@ import type { ConstructionFields } from '@/types';
 /* Libs */
 import { createClient } from '@/libs/supabase/server';
 
+/* Constants */
+import { INVALID_UUID_CODE } from '@/utils/constants';
+
 interface ActionError {
 	error: string;
 }
@@ -18,6 +21,18 @@ export const getConstructions = async () => {
 	const supabase = await createClient();
 
 	const { data, error } = await supabase.from('constructions').select('id, title, address, author_id, created_at').order('title');
+
+	if (error) throw error;
+
+	return data;
+};
+
+export const getConstruction = async (id: string) => {
+	const supabase = await createClient();
+
+	const { data, error } = await supabase.from('constructions').select('id, title, address, author_id, created_at').eq('id', id).maybeSingle();
+
+	if (error?.code === INVALID_UUID_CODE) return null;
 
 	if (error) throw error;
 

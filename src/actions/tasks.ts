@@ -16,6 +16,24 @@ interface ActionError {
 	error: string;
 }
 
+// RLS decides which tasks the current user can see; soft-deleted tasks are skipped
+export const getTasks = async (constructionId: string) => {
+	const supabase = await createClient();
+
+	const { data, error } = await supabase
+		.from('tasks')
+		.select('id, title, description, status, construction_id, author_id, executor_id, created_at, statusInfo:statuses (label)')
+		.eq('construction_id', constructionId)
+		.is('deleted_at', null)
+		.order('created_at', { ascending: false });
+
+	if (error?.code === INVALID_UUID_CODE) return [];
+
+	if (error) throw error;
+
+	return data;
+};
+
 // Runs with the user's session, so the insert goes through RLS: only a creator can add a task.
 // Status, author and the first history row are set by the database triggers,
 // which also reject an executor_id that does not belong to an executor

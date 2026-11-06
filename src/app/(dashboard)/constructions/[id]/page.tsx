@@ -3,11 +3,9 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { connection } from 'next/server';
 
-/* Libs */
-import { createClient } from '@/libs/supabase/server';
-
-/* Constants */
-import { INVALID_UUID_CODE } from '@/utils/constants';
+/* Actions */
+import { getConstruction } from '@/actions/constructions';
+import { getTasks } from '@/actions/tasks';
 
 /* Views */
 import { ConstructionItemPage } from '@/components/views/ConstructionItemPage';
@@ -20,36 +18,6 @@ export async function generateMetadata(): Promise<Metadata> {
 		title: 'Construction'
 	};
 }
-
-const getConstruction = async (id: string) => {
-	const supabase = await createClient();
-
-	const { data, error } = await supabase.from('constructions').select('id, title, address, author_id, created_at').eq('id', id).maybeSingle();
-
-	if (error?.code === INVALID_UUID_CODE) return null;
-
-	if (error) throw error;
-
-	return data;
-};
-
-// RLS decides which tasks the current user can see; soft-deleted tasks are skipped
-const getTasks = async (constructionId: string) => {
-	const supabase = await createClient();
-
-	const { data, error } = await supabase
-		.from('tasks')
-		.select('id, title, description, status, construction_id, author_id, executor_id, created_at, statusInfo:statuses (label)')
-		.eq('construction_id', constructionId)
-		.is('deleted_at', null)
-		.order('created_at', { ascending: false });
-
-	if (error?.code === INVALID_UUID_CODE) return [];
-
-	if (error) throw error;
-
-	return data;
-};
 
 const ConstructionItem = async ({ params }: { params: Promise<{ id: string }> }) => {
 	await connection();
