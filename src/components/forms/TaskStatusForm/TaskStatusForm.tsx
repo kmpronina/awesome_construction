@@ -80,7 +80,7 @@ const TaskStatusForm = (props: TaskStatusFormProps) => {
 
 		// Same rule as in the database; checked here to show the error without a request
 		if (transition.requires_comment && !data.comment.trim()) {
-			setFieldError('comment', 'A comment is required for this action');
+			setFieldError('comment', 'Для этого действия нужен комментарий');
 			setSubmitting(false);
 			return;
 		}
@@ -93,7 +93,7 @@ const TaskStatusForm = (props: TaskStatusFormProps) => {
 			return;
 		}
 
-		toast.success('Status updated');
+		toast.success('Статус изменён');
 		resetForm();
 	};
 
@@ -101,13 +101,20 @@ const TaskStatusForm = (props: TaskStatusFormProps) => {
 
 	// Tells which actions need a comment, e.g. "Required for: Return for rework"
 	const requiredFor = transitions.filter((item) => item.requires_comment).map((item) => item.action_label);
-	const commentHint = requiredFor.length > 0 ? `Required for: ${requiredFor.join(', ')}` : undefined;
+	const commentHint = requiredFor.length > 0 ? `Обязателен для действия: ${requiredFor.join(', ')}` : undefined;
 
 	const cn = clsx('flex flex-col gap-4 rounded-lg border border-zinc-200 bg-white p-4', className);
 
 	return (
 		<FormWrapper fields={taskStatusFormFields} onSubmit={handleFormSubmit} className={cn}>
-			<InputField id="comment" name="comment" label="Comment" placeholder="Comment" description={commentHint} className="w-full" />
+			<InputField
+				id="comment"
+				name="comment"
+				label="Комментарий"
+				placeholder="Комментарий к смене статуса"
+				description={commentHint}
+				className="w-full"
+			/>
 
 			<TransitionButtons transitions={transitions} pendingStatus={pendingStatus} onPick={handlePick} />
 		</FormWrapper>

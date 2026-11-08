@@ -1,9 +1,9 @@
 import type { UserItem } from '@/types';
 
-export const dateFormatter = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+export const dateFormatter = new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
 
 // Pages render on the server, so the time zone is fixed and shown explicitly
-export const dateTimeFormatter = new Intl.DateTimeFormat('en-GB', {
+export const dateTimeFormatter = new Intl.DateTimeFormat('ru-RU', {
 	day: 'numeric',
 	month: 'short',
 	year: 'numeric',

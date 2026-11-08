@@ -25,8 +25,8 @@ interface ConstructionFormProps {
 }
 
 const constructionFormSchema = yup.object().shape({
-	title: yup.string().trim().required('Title is a required field'),
-	address: yup.string().trim().required('Address is a required field')
+	title: yup.string().trim().required('Укажите название'),
+	address: yup.string().trim().required('Укажите адрес')
 });
 
 const ConstructionForm = (props: ConstructionFormProps) => {
@@ -53,17 +53,17 @@ const ConstructionForm = (props: ConstructionFormProps) => {
 
 	return (
 		<FormWrapper fields={constructionFormFields} schema={constructionFormSchema} onSubmit={handleFormSubmit} className={cn}>
-			<h1 className="text-2xl font-bold text-green">{isEdit ? 'Edit construction' : 'New construction'}</h1>
+			<h1 className="text-2xl font-bold text-green">{isEdit ? 'Редактирование объекта' : 'Новый объект'}</h1>
 
-			<InputField id="title" name="title" label="Title" placeholder="Title" className="w-full" />
-			<InputField id="address" name="address" label="Address" placeholder="Address" className="w-full" />
+			<InputField id="title" name="title" label="Название" placeholder="Например, ЖК «Речной»" className="w-full" />
+			<InputField id="address" name="address" label="Адрес" placeholder="Город, улица, дом" className="w-full" />
 
 			<div className="flex items-center justify-end gap-3">
 				<Link href={isEdit ? `/constructions/${item.id}` : '/constructions'} className="text-sm text-zinc-500 transition-colors hover:text-green">
-					Cancel
+					Отмена
 				</Link>
 
-				<SubmitButton isChangeRequired={isEdit}>{isEdit ? 'Save' : 'Create'}</SubmitButton>
+				<SubmitButton isChangeRequired={isEdit}>{isEdit ? 'Сохранить' : 'Создать'}</SubmitButton>
 			</div>
 		</FormWrapper>
 	);

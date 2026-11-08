@@ -30,7 +30,7 @@ const ConstructionItemPage = (props: ConstructionItemPageProps) => {
 		<div className="flex flex-col gap-8">
 			<div className="flex flex-col gap-2">
 				<Link href="/constructions" className="w-fit text-sm text-zinc-500 transition-colors hover:text-green">
-					← All constructions
+					← Все объекты
 				</Link>
 
 				<div className="flex flex-wrap items-start justify-between gap-3">
@@ -39,7 +39,7 @@ const ConstructionItemPage = (props: ConstructionItemPageProps) => {
 					{canEdit && (
 						<div className="flex shrink-0 items-center gap-3">
 							<Button asChild>
-								<Link href={`/constructions/${item.id}/edit`}>Edit</Link>
+								<Link href={`/constructions/${item.id}/edit`}>Изменить</Link>
 							</Button>
 
 							<DeleteButton onDelete={deleteConstruction.bind(null, item.id)} />
@@ -50,13 +50,13 @@ const ConstructionItemPage = (props: ConstructionItemPageProps) => {
 				<p className="text-zinc-600">{item.address}</p>
 
 				<p className="text-sm text-zinc-400">
-					Created <time dateTime={item.created_at}>{dateFormatter.format(new Date(item.created_at))}</time>
+					Создан <time dateTime={item.created_at}>{dateFormatter.format(new Date(item.created_at))}</time>
 				</p>
 			</div>
 
 			<section className="flex flex-col gap-4">
 				<h2 className="text-lg font-semibold text-green">
-					Tasks <span className="font-normal text-zinc-400">({tasks.length})</span>
+					Задачи <span className="font-normal text-zinc-400">({tasks.length})</span>
 				</h2>
 
 				{tasks.length > 0 ? (
@@ -66,7 +66,7 @@ const ConstructionItemPage = (props: ConstructionItemPageProps) => {
 						))}
 					</div>
 				) : (
-					<p className="rounded-lg border border-dashed border-zinc-300 p-6 text-center text-sm text-zinc-500">No tasks yet</p>
+					<p className="rounded-lg border border-dashed border-zinc-300 p-6 text-center text-sm text-zinc-500">Задач пока нет</p>
 				)}
 			</section>
 		</div>

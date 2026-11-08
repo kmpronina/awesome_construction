@@ -18,7 +18,7 @@ const Spinner = (props: SpinnerProps) => {
 
 	const cn = `animate-spin rounded-full border-solid border-current border-b-transparent ${size ? SIZES[size] : ''} ${className}`;
 
-	return <div ref={ref} role="status" aria-label="Loading" className={cn} {...restProps}></div>;
+	return <div ref={ref} role="status" aria-label="Загрузка" className={cn} {...restProps}></div>;
 };
 
 Spinner.displayName = 'Spinner';

@@ -13,7 +13,7 @@ import { ListSkeleton } from '@/components/skeletons/ListSkeleton';
 
 export async function generateMetadata(): Promise<Metadata> {
 	return {
-		title: 'Constructions'
+		title: 'Объекты'
 	};
 }
 

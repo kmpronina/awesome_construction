@@ -42,7 +42,7 @@ const PasswordField = (props: PasswordFieldProps) => {
 		<button
 			type="button"
 			className="flex cursor-pointer items-center text-zinc-500 transition-colors hover:text-zinc-800"
-			aria-label={show ? 'Hide password' : 'Show password'}
+			aria-label={show ? 'Скрыть пароль' : 'Показать пароль'}
 			onClick={() => setShow(!show)}
 		>
 			{show ? <EyeOffIcon /> : <EyeIcon />}

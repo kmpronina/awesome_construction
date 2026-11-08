@@ -16,7 +16,7 @@ import { ItemSkeleton } from '@/components/skeletons/ItemSkeleton';
 
 export async function generateMetadata(): Promise<Metadata> {
 	return {
-		title: 'Construction'
+		title: 'Объект'
 	};
 }
 

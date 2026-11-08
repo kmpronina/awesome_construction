@@ -5,7 +5,7 @@ import { LoginPage } from '@/components/views/LoginPage';
 
 export async function generateMetadata(): Promise<Metadata> {
 	return {
-		title: 'Log in'
+		title: 'Вход'
 	};
 }
 const LogIn = () => {

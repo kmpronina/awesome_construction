@@ -28,10 +28,10 @@ interface TaskFormProps {
 }
 
 const taskFormSchema = yup.object().shape({
-	title: yup.string().trim().required('Title is a required field'),
-	description: yup.string().trim().required('Description is a required field'),
-	construction: yup.object().nullable().required('Construction is a required field'),
-	executor: yup.object().nullable().required('Executor is a required field')
+	title: yup.string().trim().required('Укажите название'),
+	description: yup.string().trim().required('Укажите описание'),
+	construction: yup.object().nullable().required('Выберите объект'),
+	executor: yup.object().nullable().required('Выберите исполнителя')
 });
 
 const TaskForm = (props: TaskFormProps) => {
@@ -63,7 +63,7 @@ const TaskForm = (props: TaskFormProps) => {
 		}
 
 		if (!data.construction || !data.executor) {
-			toast.error('Construction and Executor are required fields');
+			toast.error('Выберите объект и исполнителя');
 			setSubmitting(false);
 
 			return;
@@ -86,19 +86,19 @@ const TaskForm = (props: TaskFormProps) => {
 
 	return (
 		<FormWrapper fields={taskFormFields} schema={taskFormSchema} onSubmit={handleFormSubmit} className={cn}>
-			<h1 className="text-2xl font-bold text-green">{isEdit ? 'Edit task' : 'New task'}</h1>
+			<h1 className="text-2xl font-bold text-green">{isEdit ? 'Редактирование задачи' : 'Новая задача'}</h1>
 
-			<InputField id="title" name="title" label="Title" placeholder="Title" className="w-full" />
-			<InputField id="description" name="description" label="Description" placeholder="Description" className="w-full" />
+			<InputField id="title" name="title" label="Название" placeholder="Что нужно сделать" className="w-full" />
+			<InputField id="description" name="description" label="Описание" placeholder="Подробности задачи" className="w-full" />
 
 			{/* Construction and executor are set once when the task is created */}
 			<SelectField
 				id="construction"
 				name="construction"
-				label="Construction"
-				placeholder="Select construction"
+				label="Объект"
+				placeholder="Выберите объект"
 				items={constructionItems}
-				description={isEdit ? 'Cannot be changed after creation' : undefined}
+				description={isEdit ? 'Нельзя изменить после создания' : undefined}
 				isDisabled={isEdit}
 				className="w-full"
 			/>
@@ -106,20 +106,20 @@ const TaskForm = (props: TaskFormProps) => {
 			<SelectField
 				id="executor"
 				name="executor"
-				label="Executor"
-				placeholder="Select executor"
+				label="Исполнитель"
+				placeholder="Выберите исполнителя"
 				items={executorItems}
-				description={isEdit ? 'Cannot be changed after creation' : undefined}
+				description={isEdit ? 'Нельзя изменить после создания' : undefined}
 				isDisabled={isEdit}
 				className="w-full"
 			/>
 
 			<div className="flex items-center justify-end gap-3">
 				<Link href={isEdit ? `/tasks/${item.id}` : '/constructions'} className="text-sm text-zinc-500 transition-colors hover:text-green">
-					Cancel
+					Отмена
 				</Link>
 
-				<SubmitButton isChangeRequired={isEdit}>{isEdit ? 'Save' : 'Create'}</SubmitButton>
+				<SubmitButton isChangeRequired={isEdit}>{isEdit ? 'Сохранить' : 'Создать'}</SubmitButton>
 			</div>
 		</FormWrapper>
 	);

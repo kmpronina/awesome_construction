@@ -25,7 +25,7 @@ const Header = () => {
 
 		doLogout()
 			.catch(() => {
-				toast.error('Failed to log out');
+				toast.error('Не удалось выйти');
 			})
 			.finally(() => {
 				setIsLoggingOut(false);
@@ -50,7 +50,7 @@ const Header = () => {
 						disabled={isLoggingOut}
 						onClick={handleLogout}
 					>
-						{isLoggingOut ? <Spinner size="md" /> : 'Logout'}
+						{isLoggingOut ? <Spinner size="md" /> : 'Выйти'}
 					</button>
 				</div>
 			</div>

@@ -53,16 +53,16 @@ export const createTask = async (fields: TaskCreateFields): Promise<ActionError>
 	const description = fields.description.trim();
 	const { construction_id, executor_id } = fields;
 
-	if (!title || !description || !construction_id || !executor_id) return { error: 'All fields are required' };
+	if (!title || !description || !construction_id || !executor_id) return { error: 'Заполните все поля' };
 
 	const [supabase, userId] = await Promise.all([createClient(), getUserId()]);
 
-	if (!userId) return { error: 'You are not signed in' };
+	if (!userId) return { error: 'Вы не вошли в систему' };
 
 	// author_id is also set by the database trigger; it is passed here to satisfy the insert type
 	const { error } = await supabase.from('tasks').insert({ title, description, construction_id, executor_id, author_id: userId });
 
-	if (error) return { error: 'Failed to create task' };
+	if (error) return { error: 'Не удалось создать задачу' };
 
 	revalidatePath(`/constructions/${construction_id}`);
 
@@ -81,7 +81,7 @@ export const changeTaskStatus = async (taskId: string, toStatus: string, comment
 		p_comment: comment.trim() || undefined
 	});
 
-	if (error) return { error: error.code === RAISE_EXCEPTION_CODE ? error.message : 'Failed to change status' };
+	if (error) return { error: error.code === RAISE_EXCEPTION_CODE ? error.message : 'Не удалось сменить статус' };
 
 	revalidatePath(`/tasks/${taskId}`);
 
@@ -94,16 +94,16 @@ export const updateTask = async (taskId: string, fields: TaskUpdateFields): Prom
 	const title = fields.title.trim();
 	const description = fields.description.trim();
 
-	if (!title || !description) return { error: 'Title and description are required' };
+	if (!title || !description) return { error: 'Укажите название и описание' };
 
 	const supabase = await createClient();
 
 	// select() returns the updated rows: if RLS filtered the task out, nothing is updated and no error is returned
 	const { data, error } = await supabase.from('tasks').update({ title, description }).eq('id', taskId).is('deleted_at', null).select('id');
 
-	if (error) return { error: error.code === RAISE_EXCEPTION_CODE ? error.message : 'Failed to update task' };
+	if (error) return { error: error.code === RAISE_EXCEPTION_CODE ? error.message : 'Не удалось сохранить задачу' };
 
-	if (data.length === 0) return { error: 'Task not found or you cannot edit it' };
+	if (data.length === 0) return { error: 'Задача не найдена или у вас нет прав на её изменение' };
 
 	revalidatePath(`/tasks/${taskId}`);
 
@@ -228,7 +228,7 @@ export const deleteTask = async (taskId: string, constructionId: string): Promis
 
 	const { error } = await supabase.rpc('delete_task', { p_task_id: taskId });
 
-	if (error) return { error: error.code === RAISE_EXCEPTION_CODE ? error.message : 'Failed to delete task' };
+	if (error) return { error: error.code === RAISE_EXCEPTION_CODE ? error.message : 'Не удалось удалить задачу' };
 
 	revalidatePath(`/constructions/${constructionId}`);
 	revalidatePath('/tasks/my');

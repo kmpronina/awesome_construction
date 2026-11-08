@@ -15,8 +15,8 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-	{ href: '/constructions', label: 'Home' },
-	{ href: '/tasks/my', label: 'My tasks', roles: ['executor'] }
+	{ href: '/constructions', label: 'Главная' },
+	{ href: '/tasks/my', label: 'Мои задания', roles: ['executor'] }
 ];
 
 interface NavProps {

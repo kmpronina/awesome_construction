@@ -37,30 +37,30 @@ begin
 
   -- Profiles: without a role a user sees nothing in the app
   insert into public.profiles (id, email, name, role) values
-    (v_creator, 'creator@gmail.com', 'Creator 1', 'creator'),
-    (v_creator2, 'creator2@gmail.com', 'Creator 2', 'creator'),
-    (v_executor1, 'executor1@gmail.com', 'Executor 1', 'executor'),
-    (v_executor2, 'executor2@gmail.com', 'Executor 2', 'executor')
+    (v_creator, 'creator@gmail.com', 'Постановщик 1', 'creator'),
+    (v_creator2, 'creator2@gmail.com', 'Постановщик 2', 'creator'),
+    (v_executor1, 'executor1@gmail.com', 'Исполнитель 1', 'executor'),
+    (v_executor2, 'executor2@gmail.com', 'Исполнитель 2', 'executor')
   on conflict (id) do update set name = excluded.name, role = excluded.role;
 
-  -- Act as Creator 1
+  -- Act as Постановщик 1 (creator@gmail.com)
   perform set_config('request.jwt.claims', json_build_object('sub', v_creator, 'role', 'authenticated')::text, true);
 
   insert into public.constructions (title, address, author_id)
-  values ('Riverside Residential Complex', '12 River Street', v_creator)
+  values ('ЖК «Речной»', 'ул. Набережная, 12', v_creator)
   returning id into v_riverside;
 
   insert into public.constructions (title, address, author_id)
-  values ('Northgate Office Center', '45 Northgate Avenue', v_creator)
+  values ('Бизнес-центр «Северный»', 'пр. Северный, 45', v_creator)
   returning id into v_northgate;
 
   -- New
   insert into public.tasks (title, description, construction_id, executor_id, author_id)
-  values ('Check foundation layout', 'Verify the axis layout against the project drawings and record any deviations', v_riverside, v_executor1, v_creator);
+  values ('Проверить разметку фундамента', 'Сверить разметку осей с проектом и записать отклонения', v_riverside, v_executor1, v_creator);
 
   -- In progress
   insert into public.tasks (title, description, construction_id, executor_id, author_id)
-  values ('Accept rebar delivery', 'Check quantity and certificates, sign the delivery note', v_riverside, v_executor2, v_creator)
+  values ('Принять поставку арматуры', 'Проверить количество и сертификаты, подписать накладную', v_riverside, v_executor2, v_creator)
   returning id into v_task;
 
   perform set_config('request.jwt.claims', json_build_object('sub', v_executor2, 'role', 'authenticated')::text, true);
@@ -70,18 +70,18 @@ begin
   perform set_config('request.jwt.claims', json_build_object('sub', v_creator, 'role', 'authenticated')::text, true);
 
   insert into public.tasks (title, description, construction_id, executor_id, author_id)
-  values ('Install window frames', 'Install frames on floors 1–3 and seal the joints', v_northgate, v_executor1, v_creator)
+  values ('Установить оконные рамы', 'Установить рамы на 1–3 этажах и загерметизировать швы', v_northgate, v_executor1, v_creator)
   returning id into v_task;
 
   perform set_config('request.jwt.claims', json_build_object('sub', v_executor1, 'role', 'authenticated')::text, true);
   perform public.change_task_status(v_task, 'in_progress');
-  perform public.change_task_status(v_task, 'review', 'Floors 1–3 are done, ready for inspection');
+  perform public.change_task_status(v_task, 'review', '1–3 этажи готовы, можно проверять');
 
   -- Accepted
   perform set_config('request.jwt.claims', json_build_object('sub', v_creator, 'role', 'authenticated')::text, true);
 
   insert into public.tasks (title, description, construction_id, executor_id, author_id)
-  values ('Lay floor screed', 'Pour the screed in the lobby and check the level', v_northgate, v_executor2, v_creator)
+  values ('Залить стяжку пола', 'Залить стяжку в холле и проверить уровень', v_northgate, v_executor2, v_creator)
   returning id into v_task;
 
   perform set_config('request.jwt.claims', json_build_object('sub', v_executor2, 'role', 'authenticated')::text, true);
@@ -89,18 +89,18 @@ begin
   perform public.change_task_status(v_task, 'review');
 
   perform set_config('request.jwt.claims', json_build_object('sub', v_creator, 'role', 'authenticated')::text, true);
-  perform public.change_task_status(v_task, 'accepted', 'Level is within tolerance');
+  perform public.change_task_status(v_task, 'accepted', 'Уровень в пределах допуска');
 
-  -- Act as Creator 2: a second author shows that only the author can edit and accept
+  -- Act as Постановщик 2 (creator2@gmail.com): a second author shows that only the author can edit and accept
   perform set_config('request.jwt.claims', json_build_object('sub', v_creator2, 'role', 'authenticated')::text, true);
 
   insert into public.constructions (title, address, author_id)
-  values ('Green Park School', '8 Park Lane', v_creator2)
+  values ('Школа в Зелёном парке', 'Парковый пер., 8', v_creator2)
   returning id into v_school;
 
   -- Rework
   insert into public.tasks (title, description, construction_id, executor_id, author_id)
-  values ('Paint stairwell walls', 'Prime and paint the walls of both stairwells', v_school, v_executor1, v_creator2)
+  values ('Покрасить стены на лестницах', 'Загрунтовать и покрасить стены в обоих лестничных пролётах', v_school, v_executor1, v_creator2)
   returning id into v_task;
 
   perform set_config('request.jwt.claims', json_build_object('sub', v_executor1, 'role', 'authenticated')::text, true);
@@ -108,11 +108,11 @@ begin
   perform public.change_task_status(v_task, 'review');
 
   perform set_config('request.jwt.claims', json_build_object('sub', v_creator2, 'role', 'authenticated')::text, true);
-  perform public.change_task_status(v_task, 'rework', 'Streaks on the second floor, apply one more coat');
+  perform public.change_task_status(v_task, 'rework', 'На втором этаже разводы, нужен ещё один слой');
 
   -- Back in progress after rework
   insert into public.tasks (title, description, construction_id, executor_id, author_id)
-  values ('Connect temporary power', 'Connect the site cabin to the temporary power supply', v_school, v_executor2, v_creator2)
+  values ('Подключить временное электричество', 'Подключить бытовку к временному электроснабжению', v_school, v_executor2, v_creator2)
   returning id into v_task;
 
   perform set_config('request.jwt.claims', json_build_object('sub', v_executor2, 'role', 'authenticated')::text, true);
@@ -120,10 +120,10 @@ begin
   perform public.change_task_status(v_task, 'review');
 
   perform set_config('request.jwt.claims', json_build_object('sub', v_creator2, 'role', 'authenticated')::text, true);
-  perform public.change_task_status(v_task, 'rework', 'The cable is not secured to the wall');
+  perform public.change_task_status(v_task, 'rework', 'Кабель не закреплён на стене');
 
   perform set_config('request.jwt.claims', json_build_object('sub', v_executor2, 'role', 'authenticated')::text, true);
-  perform public.change_task_status(v_task, 'in_progress', 'Securing the cable now');
+  perform public.change_task_status(v_task, 'in_progress', 'Закрепляю кабель');
 
   -- Stop acting as a user
   perform set_config('request.jwt.claims', '', true);

@@ -5,7 +5,7 @@ import { NotFoundPage } from '@/components/views/NotFoundPage';
 
 export async function generateMetadata(): Promise<Metadata> {
 	return {
-		title: 'Not Found'
+		title: 'Страница не найдена'
 	};
 }
 

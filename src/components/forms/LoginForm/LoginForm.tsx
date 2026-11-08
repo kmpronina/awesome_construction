@@ -30,18 +30,21 @@ const loginFormFields: LoginFields = {
 const loginFormSchema = yup.object().shape({
 	email: yup
 		.string()
-		.required('Email is a required field')
-		.test('username-length', 'Enter a valid email', (value) => {
+		.required('Укажите email')
+		.test('username-length', 'Введите корректный email', (value) => {
 			if (!value) return false;
 			const [username] = value.split('@');
 			return username.length >= 1 && username.length <= 64;
 		})
-		.matches(/^(?!.*\.\.)(?!.*\.$)(?!^\.)[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9-]{1,253}\.[a-zA-Z]{2,13}(\.[a-zA-Z]{2,13})?$/, 'Enter a valid email'),
+		.matches(
+			/^(?!.*\.\.)(?!.*\.$)(?!^\.)[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9-]{1,253}\.[a-zA-Z]{2,13}(\.[a-zA-Z]{2,13})?$/,
+			'Введите корректный email'
+		),
 	password: yup
 		.string()
-		.required('Password is a required field')
-		.min(8, 'Password must contain from 8 to 50 characters')
-		.max(50, 'Password must contain from 8 to 50 characters')
+		.required('Укажите пароль')
+		.min(8, 'Пароль должен содержать от 8 до 50 символов')
+		.max(50, 'Пароль должен содержать от 8 до 50 символов')
 });
 
 const LoginForm = (props: LoginFormProps) => {
@@ -52,7 +55,7 @@ const LoginForm = (props: LoginFormProps) => {
 	const handleFormSubmit = (data: LoginFields, { setSubmitting, setErrors }: FormikHelpers<LoginFields>) => {
 		doLogin(data)
 			.catch((errors) => {
-				toast.error('Failed to authenticate user');
+				toast.error('Не удалось войти. Проверьте email и пароль');
 				const { message = null, ...restErrors } = errors;
 				setErrors(restErrors);
 			})
@@ -68,10 +71,10 @@ const LoginForm = (props: LoginFormProps) => {
 
 	return (
 		<FormWrapper fields={loginFormFields} schema={loginFormSchema} onSubmit={handleFormSubmit} className={cn}>
-			<InputField id="email" name="email" type="email" label="Email" placeholder="Email" className="w-full" />
-			<PasswordField id="password" name="password" label="Password" placeholder="Password" className="w-full" />
+			<InputField id="email" name="email" type="email" label="Email" placeholder="name@example.com" className="w-full" />
+			<PasswordField id="password" name="password" label="Пароль" placeholder="Пароль" className="w-full" />
 
-			<SubmitButton className="w-full">Login</SubmitButton>
+			<SubmitButton className="w-full">Войти</SubmitButton>
 		</FormWrapper>
 	);
 };

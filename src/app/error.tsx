@@ -7,7 +7,7 @@ import { ErrorPage } from '@/components/views/ErrorPage';
 
 export async function generateMetadata(): Promise<Metadata> {
 	return {
-		title: 'Error'
+		title: 'Ошибка'
 	};
 }
 

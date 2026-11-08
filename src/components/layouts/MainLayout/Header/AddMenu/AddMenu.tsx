@@ -9,8 +9,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useUserStore } from '@/stores';
 
 const ADD_ITEMS = [
-	{ href: '/constructions/add', label: 'Construction' },
-	{ href: '/tasks/add', label: 'Task' }
+	{ href: '/constructions/add', label: 'Объект' },
+	{ href: '/tasks/add', label: 'Задачу' }
 ];
 
 const PlusIcon = () => (
@@ -35,7 +35,7 @@ const AddMenu = () => {
 					className="flex h-9 cursor-pointer items-center justify-center gap-1.5 rounded-md bg-light px-3 text-sm font-medium text-green transition-colors hover:bg-light/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-light"
 				>
 					<PlusIcon />
-					Add
+					Добавить
 				</button>
 			</DropdownMenuTrigger>
 

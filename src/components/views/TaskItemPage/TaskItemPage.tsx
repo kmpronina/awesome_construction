@@ -48,7 +48,7 @@ const TaskItemPage = (props: TaskItemPageProps) => {
 						{canEdit && (
 							<>
 								<Button asChild>
-									<Link href={`/tasks/${item.id}/edit`}>Edit</Link>
+									<Link href={`/tasks/${item.id}/edit`}>Изменить</Link>
 								</Button>
 
 								<DeleteButton onDelete={deleteTask.bind(null, item.id, item.construction_id)} />
@@ -59,29 +59,29 @@ const TaskItemPage = (props: TaskItemPageProps) => {
 			</div>
 
 			<section className="flex flex-col gap-2">
-				<h2 className="text-lg font-semibold text-green">Description</h2>
+				<h2 className="text-lg font-semibold text-green">Описание</h2>
 
 				<p className="whitespace-pre-line text-zinc-600">{item.description}</p>
 			</section>
 
 			<dl className="grid grid-cols-1 gap-4 rounded-lg border border-zinc-200 bg-white p-4 sm:grid-cols-2">
 				<div className="flex flex-col gap-1">
-					<dt className="text-xs text-zinc-400">Construction</dt>
+					<dt className="text-xs text-zinc-400">Объект</dt>
 					<dd className="text-sm text-zinc-700">{item.construction?.title ?? '—'}</dd>
 				</div>
 
 				<div className="flex flex-col gap-1">
-					<dt className="text-xs text-zinc-400">Executor</dt>
+					<dt className="text-xs text-zinc-400">Исполнитель</dt>
 					<dd className="text-sm text-zinc-700">{getUserLabel(item.executor)}</dd>
 				</div>
 
 				<div className="flex flex-col gap-1">
-					<dt className="text-xs text-zinc-400">Author</dt>
+					<dt className="text-xs text-zinc-400">Автор</dt>
 					<dd className="text-sm text-zinc-700">{getUserLabel(item.author)}</dd>
 				</div>
 
 				<div className="flex flex-col gap-1">
-					<dt className="text-xs text-zinc-400">Created</dt>
+					<dt className="text-xs text-zinc-400">Создана</dt>
 					<dd className="text-sm text-zinc-700">
 						<time dateTime={item.created_at}>{dateFormatter.format(new Date(item.created_at))}</time>
 					</dd>
@@ -90,7 +90,7 @@ const TaskItemPage = (props: TaskItemPageProps) => {
 
 			{transitions.length > 0 && (
 				<section className="flex flex-col gap-2">
-					<h2 className="text-lg font-semibold text-green">Change status</h2>
+					<h2 className="text-lg font-semibold text-green">Сменить статус</h2>
 
 					<TaskStatusForm taskId={item.id} transitions={transitions} />
 				</section>

@@ -33,7 +33,7 @@ const DeleteButton = (props: DeleteButtonProps) => {
 	if (!isConfirming) {
 		return (
 			<Button type="button" onClick={() => setIsConfirming(true)}>
-				Delete
+				Удалить
 			</Button>
 		);
 	}
@@ -41,7 +41,7 @@ const DeleteButton = (props: DeleteButtonProps) => {
 	return (
 		<div className="flex items-center gap-2">
 			<Button type="button" isLoading={isDeleting} onClick={handleDelete}>
-				Confirm delete
+				Подтвердить удаление
 			</Button>
 
 			<button
@@ -50,7 +50,7 @@ const DeleteButton = (props: DeleteButtonProps) => {
 				disabled={isDeleting}
 				onClick={() => setIsConfirming(false)}
 			>
-				Cancel
+				Отмена
 			</button>
 		</div>
 	);

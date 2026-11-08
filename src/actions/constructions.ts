@@ -55,16 +55,16 @@ export const createConstruction = async (fields: ConstructionFields): Promise<Ac
 	const title = fields.title.trim();
 	const address = fields.address.trim();
 
-	if (!title || !address) return { error: 'Title and address are required' };
+	if (!title || !address) return { error: 'Укажите название и адрес' };
 
 	const [supabase, userId] = await Promise.all([createClient(), getUserId()]);
 
-	if (!userId) return { error: 'You are not signed in' };
+	if (!userId) return { error: 'Вы не вошли в систему' };
 
 	// author_id is also set by the database trigger; it is passed here to satisfy the insert type
 	const { data, error } = await supabase.from('constructions').insert({ title, address, author_id: userId }).select('id').single();
 
-	if (error) return { error: 'Failed to create construction' };
+	if (error) return { error: 'Не удалось создать объект' };
 
 	revalidatePath('/constructions');
 
@@ -79,16 +79,16 @@ export const updateConstruction = async (constructionId: string, fields: Constru
 	const title = fields.title.trim();
 	const address = fields.address.trim();
 
-	if (!title || !address) return { error: 'Title and address are required' };
+	if (!title || !address) return { error: 'Укажите название и адрес' };
 
 	const supabase = await createClient();
 
 	// select() returns the updated rows: if RLS filtered the construction out, nothing is updated and no error is returned
 	const { data, error } = await supabase.from('constructions').update({ title, address }).eq('id', constructionId).select('id');
 
-	if (error) return { error: 'Failed to update construction' };
+	if (error) return { error: 'Не удалось сохранить объект' };
 
-	if (data.length === 0) return { error: 'Construction not found or you cannot edit it' };
+	if (data.length === 0) return { error: 'Объект не найден или у вас нет прав на его изменение' };
 
 	revalidatePath('/constructions');
 	revalidatePath(`/constructions/${constructionId}`);
@@ -105,9 +105,9 @@ export const deleteConstruction = async (constructionId: string): Promise<Action
 	// select() returns the deleted rows: if RLS filtered the construction out, nothing is deleted and no error is returned
 	const { data, error } = await supabase.from('constructions').delete().eq('id', constructionId).select('id');
 
-	if (error) return { error: error.code === RAISE_EXCEPTION_CODE ? error.message : 'Failed to delete construction' };
+	if (error) return { error: error.code === RAISE_EXCEPTION_CODE ? error.message : 'Не удалось удалить объект' };
 
-	if (data.length === 0) return { error: 'Construction not found or you cannot delete it' };
+	if (data.length === 0) return { error: 'Объект не найден или у вас нет прав на его удаление' };
 
 	revalidatePath('/constructions');
 

@@ -12,7 +12,7 @@ interface TaskHistoryProps {
 const getChangeLabel = (item: TaskHistoryItem) => {
 	const to = item.toStatusInfo?.label ?? item.to_status;
 
-	if (!item.from_status) return `Created as ${to}`;
+	if (!item.from_status) return `Создана со статусом «${to}»`;
 
 	const from = item.fromStatusInfo?.label ?? item.from_status;
 
@@ -24,7 +24,7 @@ const TaskHistory = (props: TaskHistoryProps) => {
 
 	return (
 		<section className="flex flex-col gap-4">
-			<h2 className="text-lg font-semibold text-green">History</h2>
+			<h2 className="text-lg font-semibold text-green">История</h2>
 
 			{items.length > 0 ? (
 				<ol className="flex flex-col gap-3">
@@ -41,7 +41,7 @@ const TaskHistory = (props: TaskHistoryProps) => {
 					))}
 				</ol>
 			) : (
-				<p className="rounded-lg border border-dashed border-zinc-300 p-6 text-center text-sm text-zinc-500">No history yet</p>
+				<p className="rounded-lg border border-dashed border-zinc-300 p-6 text-center text-sm text-zinc-500">История пока пуста</p>
 			)}
 		</section>
 	);
